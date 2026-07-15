@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARÉ — Painel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a1a18;
+    --bg-card:#0f2521;
+    --bg-card-hover:#123028;
+    --line:#1c3d36;
+    --tide:#2fb8a3;
+    --tide-bright:#4fe0c6;
+    --sun:#f4c430;
+    --clay:#e8763a;
+    --text:#f2ede2;
+    --text-dim:#8fa89f;
+    --text-faint:#4d6a61;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
+  }
+
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(15,37,33,0.6), transparent);
+  }
+  .logo{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;
+    letter-spacing:0.01em;display:flex;align-items:center;gap:8px;
+  }
+  .logo .wave{color:var(--tide-bright);}
+  .nav-right{display:flex;align-items:center;gap:18px;font-size:13px;color:var(--text-dim);}
+  .avatar{
+    width:30px;height:30px;border-radius:50%;
+    background:linear-gradient(135deg,var(--clay),var(--sun));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#1a1108;
+  }
+
+  .wrap{max-width:1000px;margin:0 auto;padding:36px 24px 80px;}
+
+  .page-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:28px;}
+  .page-head h1{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:600;}
+  .page-head p{color:var(--text-dim);font-size:14px;margin-top:4px;}
+  .btn-new{
+    background:var(--tide);color:#04120f;border:none;border-radius:8px;
+    padding:10px 18px;font-weight:600;font-size:14px;font-family:'Inter',sans-serif;
+    cursor:pointer;display:flex;align-items:center;gap:8px;
+    transition:background 0.2s ease;
+  }
+  .btn-new:hover{background:var(--tide-bright);}
+
+  .rio-panel{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:16px;
+    padding:26px 28px 22px;margin-bottom:32px;position:relative;overflow:hidden;
+  }
+  .rio-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-faint);
+    margin-bottom:18px;
+  }
+  .rio-track{position:relative;height:64px;}
+  .rio-line{
+    position:absolute;top:32px;left:24px;right:24px;height:2px;
+    background:var(--line);
+  }
+  .rio-flow{
+    position:absolute;top:31px;left:24px;height:4px;width:0%;
+    background:linear-gradient(90deg,var(--tide),var(--tide-bright));
+    border-radius:2px;
+    animation:encher 3.2s ease-in-out infinite;
+  }
+  @keyframes encher{
+    0%{width:0%;}
+    60%{width:100%;}
+    100%{width:100%;}
+  }
+  .rio-nodes{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;}
+  .rio-node{display:flex;flex-direction:column;align-items:center;width:110px;text-align:center;}
+  .rio-dot{
+    width:14px;height:14px;border-radius:50%;background:var(--bg-card);
+    border:2px solid var(--tide);margin-top:26px;position:relative;z-index:2;
+  }
+  .rio-node.ativo .rio-dot{background:var(--tide-bright);box-shadow:0 0 0 4px rgba(79,224,198,0.15);}
+  .rio-node-label{margin-top:10px;font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+  .rio-node.ativo .rio-node-label{color:var(--text);}
+
+  .secao-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-faint);
+    margin-bottom:12px;
+  }
+  .projeto{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 20px;margin-bottom:10px;
+    transition:background 0.2s ease, border-color 0.2s ease;
+    cursor:pointer;
+  }
+  .projeto:hover{background:var(--bg-card-hover);border-color:var(--tide);}
+  .projeto-info{display:flex;align-items:center;gap:14px;}
+  .status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .status-dot.online{background:var(--tide-bright);box-shadow:0 0 0 3px rgba(79,224,198,0.18);}
+  .status-dot.building{background:var(--sun);animation:piscar 1s ease-in-out infinite;}
+  .status-dot.offline{background:var(--text-faint);}
+  @keyframes piscar{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  .projeto-nome{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;}
+  .projeto-dominio{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);margin-top:2px;}
+  .projeto-meta{text-align:right;font-size:12px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
+  .projeto-meta .tempo{color:var(--text-dim);}
+
+  .recursos-grid{
+    margin-top:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;
+  }
+  .recurso{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+  }
+  .recurso-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint);}
+  .recurso-valor{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;margin-top:8px;color:var(--text);}
+  .barra{height:4px;background:var(--line);border-radius:2px;margin-top:10px;overflow:hidden;}
+  .barra-fill{height:100%;background:var(--tide);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="wave">〜</span> MARÉ</div>
+  <div class="nav-right">
+    <span>vasco-starlink</span>
+    <div class="avatar">V</div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>Os teus projetos</h1>
+      <p>Deploy automático a partir do GitHub — sem tocar no servidor.</p>
+    </div>
+    <button class="btn-new">+ Novo projeto</button>
+  </div>
+
+  <div class="rio-panel">
+    <div class="rio-label">Deploy em curso — bot-para-dar</div>
+    <div class="rio-track">
+      <div class="rio-line"></div>
+      <div class="rio-flow"></div>
+      <div class="rio-nodes">
+        <div class="rio-node ativo">
+          <div class="rio-dot"></div>
+          <div class="rio-node-label">git push</div>
+        </div>
+        <div class="rio-node ativo">
+          <div class="rio-dot"></div>
+          <div class="rio-node-label">build</div>
+        </div>
+        <div class="rio-node ativo">
+          <div class="rio-dot"></div>
+          <div class="rio-node-label">container</div>
+        </div>
+        <div class="rio-node">
+          <div class="rio-dot"></div>
+          <div class="rio-node-label">no ar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secao-label">Projetos ativos</div>
+
+  <div class="projeto">
+    <div class="projeto-info">
+      <span class="status-dot online"></span>
+      <div>
+        <div class="projeto-nome">bot-para-dar</div>
+        <div class="projeto-dominio">botparadar.mare.app</div>
+      </div>
+    </div>
+    <div class="projeto-meta">
+      <div class="tempo">último deploy há 4 min</div>
+      <div>256 MB · 0.3 vCPU</div>
+    </div>
+  </div>
+
+  <div class="projeto">
+    <div class="projeto-info">
+      <span class="status-dot building"></span>
+      <div>
+        <div class="projeto-nome">painel-mozchat</div>
+        <div class="projeto-dominio">painel.mare.app</div>
+      </div>
+    </div>
+    <div class="projeto-meta">
+      <div class="tempo">a construir agora…</div>
+      <div>— MB · —</div>
+    </div>
+  </div>
+
+  <div class="projeto">
+    <div class="projeto-info">
+      <span class="status-dot offline"></span>
+      <div>
+        <div class="projeto-nome">bot-top-revenda</div>
+        <div class="projeto-dominio">toprevenda.mare.app</div>
+      </div>
+    </div>
+    <div class="projeto-meta">
+      <div class="tempo">parado há 2 dias</div>
+      <div>0 MB · 0 vCPU</div>
+    </div>
+  </div>
+
+  <div class="secao-label" style="margin-top:32px;">Recursos do servidor</div>
+  <div class="recursos-grid">
+    <div class="recurso">
+      <div class="recurso-label">CPU</div>
+      <div class="recurso-valor">34%</div>
+      <div class="barra"><div class="barra-fill" style="width:34%"></div></div>
+    </div>
+    <div class="recurso">
+      <div class="recurso-label">Memória</div>
+      <div class="recurso-valor">1.2 / 4 GB</div>
+      <div class="barra"><div class="barra-fill" style="width:30%"></div></div>
+    </div>
+    <div class="recurso">
+      <div class="recurso-label">Projetos</div>
+      <div class="recurso-valor">3</div>
+    </div>
+    <div class="recurso">
+      <div class="recurso-label">Domínios ativos</div>
+      <div class="recurso-valor">2</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
