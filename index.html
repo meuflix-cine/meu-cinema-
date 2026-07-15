@@ -129,6 +129,77 @@
   .recurso-valor{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;margin-top:8px;color:var(--text);}
   .barra{height:4px;background:var(--line);border-radius:2px;margin-top:10px;overflow:hidden;}
   .barra-fill{height:100%;background:var(--tide);border-radius:2px;}
+
+  .overlay{
+    display:none;position:fixed;inset:0;background:rgba(5,14,12,0.72);
+    backdrop-filter:blur(2px);z-index:50;align-items:flex-end;justify-content:center;
+  }
+  .overlay.aberto{display:flex;}
+  @media (min-width:640px){ .overlay{align-items:center;} }
+
+  .modal{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:18px 18px 0 0;
+    width:100%;max-width:480px;padding:24px 22px 28px;
+    animation:subir 0.25s ease;
+  }
+  @media (min-width:640px){ .modal{border-radius:16px;} }
+  @keyframes subir{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+  .modal-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .modal-titulo{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;}
+  .modal-fechar{
+    background:none;border:none;color:var(--text-faint);font-size:20px;cursor:pointer;
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;
+  }
+  .modal-fechar:hover{background:var(--line);color:var(--text);}
+
+  .campo{margin-bottom:16px;}
+  .campo label{
+    display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;
+    font-family:'JetBrains Mono',monospace;letter-spacing:0.02em;
+  }
+  .campo input{
+    width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;
+    padding:11px 13px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;
+    outline:none;transition:border-color 0.15s ease;
+  }
+  .campo input:focus{border-color:var(--tide);}
+  .campo input::placeholder{color:var(--text-faint);}
+  .campo-hint{font-size:11px;color:var(--text-faint);margin-top:5px;font-family:'JetBrains Mono',monospace;}
+  .campo-hint .destaque{color:var(--tide-bright);}
+
+  .modal-erro{
+    background:rgba(232,84,58,0.1);border:1px solid rgba(232,84,58,0.3);color:#ff8b73;
+    font-size:12px;padding:9px 12px;border-radius:8px;margin-bottom:14px;display:none;
+  }
+  .modal-erro.mostrar{display:block;}
+
+  .modal-acoes{display:flex;gap:10px;margin-top:20px;}
+  .btn-cancelar{
+    flex:1;background:transparent;border:1px solid var(--line);color:var(--text-dim);
+    border-radius:8px;padding:11px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+  .btn-cancelar:hover{border-color:var(--text-faint);color:var(--text);}
+  .btn-criar{
+    flex:2;background:var(--tide);border:none;color:#04120f;font-weight:600;
+    border-radius:8px;padding:11px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .btn-criar:hover{background:var(--tide-bright);}
+  .btn-criar:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .spinner{
+    width:14px;height:14px;border:2px solid rgba(4,18,15,0.3);border-top-color:#04120f;
+    border-radius:50%;animation:rodar 0.7s linear infinite;display:none;
+  }
+  .btn-criar.a-criar .spinner{display:inline-block;}
+  .btn-criar.a-criar .texto-normal{display:none;}
+  @keyframes rodar{to{transform:rotate(360deg);}}
+
+  .vazio{
+    text-align:center;padding:36px 20px;color:var(--text-faint);font-size:13px;
+    border:1px dashed var(--line);border-radius:12px;
+  }
 </style>
 </head>
 <body>
@@ -147,7 +218,7 @@
       <h1>Os teus projetos</h1>
       <p>Deploy automático a partir do GitHub — sem tocar no servidor.</p>
     </div>
-    <button class="btn-new">+ Novo projeto</button>
+    <button class="btn-new" id="btnAbrirModal">+ Novo projeto</button>
   </div>
 
   <div class="rio-panel">
@@ -178,47 +249,7 @@
 
   <div class="secao-label">Projetos ativos</div>
 
-  <div class="projeto">
-    <div class="projeto-info">
-      <span class="status-dot online"></span>
-      <div>
-        <div class="projeto-nome">bot-para-dar</div>
-        <div class="projeto-dominio">botparadar.mare.app</div>
-      </div>
-    </div>
-    <div class="projeto-meta">
-      <div class="tempo">último deploy há 4 min</div>
-      <div>256 MB · 0.3 vCPU</div>
-    </div>
-  </div>
-
-  <div class="projeto">
-    <div class="projeto-info">
-      <span class="status-dot building"></span>
-      <div>
-        <div class="projeto-nome">painel-mozchat</div>
-        <div class="projeto-dominio">painel.mare.app</div>
-      </div>
-    </div>
-    <div class="projeto-meta">
-      <div class="tempo">a construir agora…</div>
-      <div>— MB · —</div>
-    </div>
-  </div>
-
-  <div class="projeto">
-    <div class="projeto-info">
-      <span class="status-dot offline"></span>
-      <div>
-        <div class="projeto-nome">bot-top-revenda</div>
-        <div class="projeto-dominio">toprevenda.mare.app</div>
-      </div>
-    </div>
-    <div class="projeto-meta">
-      <div class="tempo">parado há 2 dias</div>
-      <div>0 MB · 0 vCPU</div>
-    </div>
-  </div>
+  <div id="listaProjetos"></div>
 
   <div class="secao-label" style="margin-top:32px;">Recursos do servidor</div>
   <div class="recursos-grid">
@@ -242,6 +273,203 @@
     </div>
   </div>
 </div>
+
+<!-- ---------- MODAL: NOVO PROJETO ---------- -->
+<div class="overlay" id="overlayModal">
+  <div class="modal">
+    <div class="modal-topo">
+      <div class="modal-titulo">Novo projeto</div>
+      <button class="modal-fechar" id="btnFecharModal">✕</button>
+    </div>
+
+    <div class="modal-erro" id="modalErro"></div>
+
+    <form id="formNovoProjeto">
+      <div class="campo">
+        <label for="campoNome">Nome do projeto</label>
+        <input type="text" id="campoNome" placeholder="bot-para-dar" autocomplete="off" required>
+      </div>
+
+      <div class="campo">
+        <label for="campoRepo">Link do repositório GitHub</label>
+        <input type="text" id="campoRepo" placeholder="https://github.com/utilizador/repositorio" autocomplete="off" required>
+        <div class="campo-hint">Tem de ser um repositório público com um <span class="destaque">Dockerfile</span> na raiz.</div>
+      </div>
+
+      <div class="campo">
+        <label for="campoSubdominio">Subdomínio</label>
+        <input type="text" id="campoSubdominio" placeholder="bot-para-dar" autocomplete="off" required>
+        <div class="campo-hint" id="dominioPreview">ficará em <span class="destaque">—.mare.app</span></div>
+      </div>
+
+      <div class="modal-acoes">
+        <button type="button" class="btn-cancelar" id="btnCancelarModal">Cancelar</button>
+        <button type="submit" class="btn-criar" id="btnCriar">
+          <span class="spinner"></span>
+          <span class="texto-normal">Criar e implantar</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const API_PROJETOS = null;
+
+  let projetos = [
+    { nome:'bot-para-dar', dominio:'botparadar.mare.app', estado:'online', tempo:'último deploy há 4 min', memoria:'256 MB · 0.3 vCPU' },
+    { nome:'painel-mozchat', dominio:'painel.mare.app', estado:'building', tempo:'a construir agora…', memoria:'— MB · —' },
+    { nome:'bot-top-revenda', dominio:'toprevenda.mare.app', estado:'offline', tempo:'parado há 2 dias', memoria:'0 MB · 0 vCPU' },
+  ];
+
+  const listaEl = document.getElementById('listaProjetos');
+
+  function renderizarProjetos(){
+    if(projetos.length === 0){
+      listaEl.innerHTML = '<div class="vazio">Ainda não tens projetos. Toca em "+ Novo projeto" para começar.</div>';
+      return;
+    }
+    listaEl.innerHTML = projetos.map(p => `
+      <div class="projeto">
+        <div class="projeto-info">
+          <span class="status-dot ${p.estado}"></span>
+          <div>
+            <div class="projeto-nome">${p.nome}</div>
+            <div class="projeto-dominio">${p.dominio}</div>
+          </div>
+        </div>
+        <div class="projeto-meta">
+          <div class="tempo">${p.tempo}</div>
+          <div>${p.memoria}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderizarProjetos();
+
+  const overlay = document.getElementById('overlayModal');
+  const form = document.getElementById('formNovoProjeto');
+  const erroBox = document.getElementById('modalErro');
+  const btnCriar = document.getElementById('btnCriar');
+
+  function abrirModal(){
+    overlay.classList.add('aberto');
+    erroBox.classList.remove('mostrar');
+    form.reset();
+    document.getElementById('dominioPreview').innerHTML = 'ficará em <span class="destaque">—.mare.app</span>';
+  }
+  function fecharModal(){ overlay.classList.remove('aberto'); }
+
+  document.getElementById('btnAbrirModal').addEventListener('click', abrirModal);
+  document.getElementById('btnFecharModal').addEventListener('click', fecharModal);
+  document.getElementById('btnCancelarModal').addEventListener('click', fecharModal);
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) fecharModal(); });
+
+  const campoRepo = document.getElementById('campoRepo');
+  const campoSubdominio = document.getElementById('campoSubdominio');
+  const dominioPreview = document.getElementById('dominioPreview');
+
+  function slugify(texto){
+    return texto.toLowerCase().trim()
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  campoRepo.addEventListener('input', () => {
+    const partes = campoRepo.value.trim().replace(/\/$/, '').split('/');
+    const nomeRepo = partes[partes.length - 1];
+    if(nomeRepo && !campoSubdominio.dataset.editadoManualmente){
+      campoSubdominio.value = slugify(nomeRepo);
+      atualizarPreviewDominio();
+    }
+    if(nomeRepo && !document.getElementById('campoNome').dataset.editadoManualmente){
+      document.getElementById('campoNome').value = nomeRepo;
+    }
+  });
+  campoSubdominio.addEventListener('input', () => {
+    campoSubdominio.dataset.editadoManualmente = 'true';
+    atualizarPreviewDominio();
+  });
+  document.getElementById('campoNome').addEventListener('input', function(){
+    this.dataset.editadoManualmente = 'true';
+  });
+
+  function atualizarPreviewDominio(){
+    const valor = slugify(campoSubdominio.value) || '—';
+    dominioPreview.innerHTML = `ficará em <span class="destaque">${valor}.mare.app</span>`;
+  }
+
+  function validarUrlGithub(url){
+    return /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/?$/.test(url.trim());
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    erroBox.classList.remove('mostrar');
+
+    const nome = document.getElementById('campoNome').value.trim();
+    const repoUrl = campoRepo.value.trim();
+    const subdominio = slugify(campoSubdominio.value);
+
+    if(!validarUrlGithub(repoUrl)){
+      erroBox.textContent = 'Cola um link válido do GitHub, ex: https://github.com/utilizador/repositorio';
+      erroBox.classList.add('mostrar');
+      return;
+    }
+    if(!subdominio){
+      erroBox.textContent = 'Escolhe um subdomínio válido.';
+      erroBox.classList.add('mostrar');
+      return;
+    }
+    if(projetos.some(p => p.dominio === subdominio + '.mare.app')){
+      erroBox.textContent = 'Já existe um projeto com esse subdomínio.';
+      erroBox.classList.add('mostrar');
+      return;
+    }
+
+    btnCriar.classList.add('a-criar');
+    btnCriar.disabled = true;
+
+    try{
+      if(API_PROJETOS){
+        const res = await fetch(API_PROJETOS, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, repoUrl, subdominio })
+        });
+        if(!res.ok) throw new Error('Falha ao contactar o servidor de deploy');
+      } else {
+        await new Promise(r => setTimeout(r, 1400));
+      }
+
+      projetos.push({
+        nome,
+        dominio: subdominio + '.mare.app',
+        estado: 'building',
+        tempo: 'a construir agora…',
+        memoria: '— MB · —'
+      });
+      renderizarProjetos();
+      fecharModal();
+
+      if(!API_PROJETOS){
+        setTimeout(() => {
+          const p = projetos.find(p => p.nome === nome);
+          if(p){ p.estado = 'online'; p.tempo = 'último deploy agora mesmo'; p.memoria = '64 MB · 0.1 vCPU'; }
+          renderizarProjetos();
+        }, 3500);
+      }
+    } catch(err){
+      erroBox.textContent = 'Não foi possível criar o projeto. ' + err.message;
+      erroBox.classList.add('mostrar');
+    } finally {
+      btnCriar.classList.remove('a-criar');
+      btnCriar.disabled = false;
+    }
+  });
+</script>
 
 </body>
 </html>
