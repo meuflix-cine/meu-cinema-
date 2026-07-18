@@ -1,475 +1,113 @@
 <!DOCTYPE html>
-<html lang="pt-MZ">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MARÉ — Painel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>CINE LIVRE</title>
 <style>
-  :root{
-    --bg:#0a1a18;
-    --bg-card:#0f2521;
-    --bg-card-hover:#123028;
-    --line:#1c3d36;
-    --tide:#2fb8a3;
-    --tide-bright:#4fe0c6;
-    --sun:#f4c430;
-    --clay:#e8763a;
-    --text:#f2ede2;
-    --text-dim:#8fa89f;
-    --text-faint:#4d6a61;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',system-ui,sans-serif;
-    min-height:100vh;
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
-  }
-
-  nav{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:18px 28px;border-bottom:1px solid var(--line);
-    background:linear-gradient(180deg, rgba(15,37,33,0.6), transparent);
-  }
-  .logo{
-    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;
-    letter-spacing:0.01em;display:flex;align-items:center;gap:8px;
-  }
-  .logo .wave{color:var(--tide-bright);}
-  .nav-right{display:flex;align-items:center;gap:18px;font-size:13px;color:var(--text-dim);}
-  .avatar{
-    width:30px;height:30px;border-radius:50%;
-    background:linear-gradient(135deg,var(--clay),var(--sun));
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#1a1108;
-  }
-
-  .wrap{max-width:1000px;margin:0 auto;padding:36px 24px 80px;}
-
-  .page-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:28px;}
-  .page-head h1{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:600;}
-  .page-head p{color:var(--text-dim);font-size:14px;margin-top:4px;}
-  .btn-new{
-    background:var(--tide);color:#04120f;border:none;border-radius:8px;
-    padding:10px 18px;font-weight:600;font-size:14px;font-family:'Inter',sans-serif;
-    cursor:pointer;display:flex;align-items:center;gap:8px;
-    transition:background 0.2s ease;
-  }
-  .btn-new:hover{background:var(--tide-bright);}
-
-  .rio-panel{
-    background:var(--bg-card);border:1px solid var(--line);border-radius:16px;
-    padding:26px 28px 22px;margin-bottom:32px;position:relative;overflow:hidden;
-  }
-  .rio-label{
-    font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-faint);
-    margin-bottom:18px;
-  }
-  .rio-track{position:relative;height:64px;}
-  .rio-line{
-    position:absolute;top:32px;left:24px;right:24px;height:2px;
-    background:var(--line);
-  }
-  .rio-flow{
-    position:absolute;top:31px;left:24px;height:4px;width:0%;
-    background:linear-gradient(90deg,var(--tide),var(--tide-bright));
-    border-radius:2px;
-    animation:encher 3.2s ease-in-out infinite;
-  }
-  @keyframes encher{
-    0%{width:0%;}
-    60%{width:100%;}
-    100%{width:100%;}
-  }
-  .rio-nodes{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;}
-  .rio-node{display:flex;flex-direction:column;align-items:center;width:110px;text-align:center;}
-  .rio-dot{
-    width:14px;height:14px;border-radius:50%;background:var(--bg-card);
-    border:2px solid var(--tide);margin-top:26px;position:relative;z-index:2;
-  }
-  .rio-node.ativo .rio-dot{background:var(--tide-bright);box-shadow:0 0 0 4px rgba(79,224,198,0.15);}
-  .rio-node-label{margin-top:10px;font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
-  .rio-node.ativo .rio-node-label{color:var(--text);}
-
-  .secao-label{
-    font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-faint);
-    margin-bottom:12px;
-  }
-  .projeto{
-    display:flex;align-items:center;justify-content:space-between;
-    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
-    padding:16px 20px;margin-bottom:10px;
-    transition:background 0.2s ease, border-color 0.2s ease;
-    cursor:pointer;
-  }
-  .projeto:hover{background:var(--bg-card-hover);border-color:var(--tide);}
-  .projeto-info{display:flex;align-items:center;gap:14px;}
-  .status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-  .status-dot.online{background:var(--tide-bright);box-shadow:0 0 0 3px rgba(79,224,198,0.18);}
-  .status-dot.building{background:var(--sun);animation:piscar 1s ease-in-out infinite;}
-  .status-dot.offline{background:var(--text-faint);}
-  @keyframes piscar{0%,100%{opacity:1;}50%{opacity:0.3;}}
-  .projeto-nome{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;}
-  .projeto-dominio{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);margin-top:2px;}
-  .projeto-meta{text-align:right;font-size:12px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
-  .projeto-meta .tempo{color:var(--text-dim);}
-
-  .recursos-grid{
-    margin-top:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;
-  }
-  .recurso{
-    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
-  }
-  .recurso-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint);}
-  .recurso-valor{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;margin-top:8px;color:var(--text);}
-  .barra{height:4px;background:var(--line);border-radius:2px;margin-top:10px;overflow:hidden;}
-  .barra-fill{height:100%;background:var(--tide);border-radius:2px;}
-
-  .overlay{
-    display:none;position:fixed;inset:0;background:rgba(5,14,12,0.72);
-    backdrop-filter:blur(2px);z-index:50;align-items:flex-end;justify-content:center;
-  }
-  .overlay.aberto{display:flex;}
-  @media (min-width:640px){ .overlay{align-items:center;} }
-
-  .modal{
-    background:var(--bg-card);border:1px solid var(--line);border-radius:18px 18px 0 0;
-    width:100%;max-width:480px;padding:24px 22px 28px;
-    animation:subir 0.25s ease;
-  }
-  @media (min-width:640px){ .modal{border-radius:16px;} }
-  @keyframes subir{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-
-  .modal-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
-  .modal-titulo{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;}
-  .modal-fechar{
-    background:none;border:none;color:var(--text-faint);font-size:20px;cursor:pointer;
-    width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;
-  }
-  .modal-fechar:hover{background:var(--line);color:var(--text);}
-
-  .campo{margin-bottom:16px;}
-  .campo label{
-    display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;
-    font-family:'JetBrains Mono',monospace;letter-spacing:0.02em;
-  }
-  .campo input{
-    width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;
-    padding:11px 13px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;
-    outline:none;transition:border-color 0.15s ease;
-  }
-  .campo input:focus{border-color:var(--tide);}
-  .campo input::placeholder{color:var(--text-faint);}
-  .campo-hint{font-size:11px;color:var(--text-faint);margin-top:5px;font-family:'JetBrains Mono',monospace;}
-  .campo-hint .destaque{color:var(--tide-bright);}
-
-  .modal-erro{
-    background:rgba(232,84,58,0.1);border:1px solid rgba(232,84,58,0.3);color:#ff8b73;
-    font-size:12px;padding:9px 12px;border-radius:8px;margin-bottom:14px;display:none;
-  }
-  .modal-erro.mostrar{display:block;}
-
-  .modal-acoes{display:flex;gap:10px;margin-top:20px;}
-  .btn-cancelar{
-    flex:1;background:transparent;border:1px solid var(--line);color:var(--text-dim);
-    border-radius:8px;padding:11px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;
-  }
-  .btn-cancelar:hover{border-color:var(--text-faint);color:var(--text);}
-  .btn-criar{
-    flex:2;background:var(--tide);border:none;color:#04120f;font-weight:600;
-    border-radius:8px;padding:11px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;
-    display:flex;align-items:center;justify-content:center;gap:8px;
-  }
-  .btn-criar:hover{background:var(--tide-bright);}
-  .btn-criar:disabled{opacity:0.5;cursor:not-allowed;}
-
-  .spinner{
-    width:14px;height:14px;border:2px solid rgba(4,18,15,0.3);border-top-color:#04120f;
-    border-radius:50%;animation:rodar 0.7s linear infinite;display:none;
-  }
-  .btn-criar.a-criar .spinner{display:inline-block;}
-  .btn-criar.a-criar .texto-normal{display:none;}
-  @keyframes rodar{to{transform:rotate(360deg);}}
-
-  .vazio{
-    text-align:center;padding:36px 20px;color:var(--text-faint);font-size:13px;
-    border:1px dashed var(--line);border-radius:12px;
-  }
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0B0B0B;color:#fff;font-family:'Segoe UI',Arial}
+header{position:fixed;top:0;width:100%;padding:15px 4%;background:linear-gradient(180deg,rgba(0,0,0,0.9)0%,transparent 100%);display:flex;align-items:center;gap:20px;z-index:100}
+header h1{color:#E50914;font-size:24px;font-weight:900}
+nav{display:flex;gap:15px}
+nav button{background:none;border:none;color:#fff;font-size:14px;cursor:pointer;opacity:0.8}
+nav button:hover{opacity:1}
+.banner{height:70vh;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:4%;background-image:linear-gradient(to top, #0B0B0B 10%, transparent 90%)}
+.banner-info h2{font-size:3vw;margin-bottom:10px}
+.banner-info p{width:40%;font-size:1.2vw;margin-bottom:20px}
+.btn-play{padding:10px 25px;background:#fff;color:#000;border:none;border-radius:4px;font-size:16px;font-weight:bold;cursor:pointer}
+.row{padding:20px 4%}
+.row h3{margin-bottom:10px;font-size:18px}
+.lista-row{display:flex;gap:8px;overflow-x:auto;scroll-behavior:smooth}
+.lista-row::-webkit-scrollbar{display:none}
+.card{min-width:180px;transition:0.3s;cursor:pointer}
+.card:hover{transform:scale(1.1);z-index:10}
+.card img{width:100%;border-radius:4px}
+#player{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:none;flex-direction:column}
+#player button{margin:15px;background:#333;color:#fff;border:none;padding:10px 20px;border-radius:4px;width:120px}
+#player iframe{flex:1;border:none}
 </style>
 </head>
 <body>
 
+<header>
+<h1>CINE LIVRE</h1>
 <nav>
-  <div class="logo"><span class="wave">〜</span> MARÉ</div>
-  <div class="nav-right">
-    <span>vasco-starlink</span>
-    <div class="avatar">V</div>
-  </div>
+<button onclick="carregar('popular')">Início</button>
+<button onclick="carregar('top_rated')">Top 10</button>
+<button onclick="carregar('upcoming')">Lançamentos</button>
 </nav>
+</header>
 
-<div class="wrap">
-  <div class="page-head">
-    <div>
-      <h1>Os teus projetos</h1>
-      <p>Deploy automático a partir do GitHub — sem tocar no servidor.</p>
-    </div>
-    <button class="btn-new" id="btnAbrirModal">+ Novo projeto</button>
-  </div>
-
-  <div class="rio-panel">
-    <div class="rio-label">Deploy em curso — bot-para-dar</div>
-    <div class="rio-track">
-      <div class="rio-line"></div>
-      <div class="rio-flow"></div>
-      <div class="rio-nodes">
-        <div class="rio-node ativo">
-          <div class="rio-dot"></div>
-          <div class="rio-node-label">git push</div>
-        </div>
-        <div class="rio-node ativo">
-          <div class="rio-dot"></div>
-          <div class="rio-node-label">build</div>
-        </div>
-        <div class="rio-node ativo">
-          <div class="rio-dot"></div>
-          <div class="rio-node-label">container</div>
-        </div>
-        <div class="rio-node">
-          <div class="rio-dot"></div>
-          <div class="rio-node-label">no ar</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="secao-label">Projetos ativos</div>
-
-  <div id="listaProjetos"></div>
-
-  <div class="secao-label" style="margin-top:32px;">Recursos do servidor</div>
-  <div class="recursos-grid">
-    <div class="recurso">
-      <div class="recurso-label">CPU</div>
-      <div class="recurso-valor">34%</div>
-      <div class="barra"><div class="barra-fill" style="width:34%"></div></div>
-    </div>
-    <div class="recurso">
-      <div class="recurso-label">Memória</div>
-      <div class="recurso-valor">1.2 / 4 GB</div>
-      <div class="barra"><div class="barra-fill" style="width:30%"></div></div>
-    </div>
-    <div class="recurso">
-      <div class="recurso-label">Projetos</div>
-      <div class="recurso-valor">3</div>
-    </div>
-    <div class="recurso">
-      <div class="recurso-label">Domínios ativos</div>
-      <div class="recurso-valor">2</div>
-    </div>
-  </div>
+<div class="banner" id="banner">
+<div class="banner-info">
+<h2 id="bannerTitulo">CINE LIVRE</h2>
+<p id="bannerDesc">Busque milhares de filmes e assista online</p>
+<button class="btn-play" onclick="assistirBanner()">▶ Assistir</button>
+</div>
 </div>
 
-<!-- ---------- MODAL: NOVO PROJETO ---------- -->
-<div class="overlay" id="overlayModal">
-  <div class="modal">
-    <div class="modal-topo">
-      <div class="modal-titulo">Novo projeto</div>
-      <button class="modal-fechar" id="btnFecharModal">✕</button>
-    </div>
+<div class="row">
+<h3>Em Alta</h3>
+<div class="lista-row" id="listaPopular"></div>
+</div>
 
-    <div class="modal-erro" id="modalErro"></div>
+<div class="row">
+<h3>Top Avaliados</h3>
+<div class="lista-row" id="listaTop"></div>
+</div>
 
-    <form id="formNovoProjeto">
-      <div class="campo">
-        <label for="campoNome">Nome do projeto</label>
-        <input type="text" id="campoNome" placeholder="bot-para-dar" autocomplete="off" required>
-      </div>
-
-      <div class="campo">
-        <label for="campoRepo">Link do repositório GitHub</label>
-        <input type="text" id="campoRepo" placeholder="https://github.com/utilizador/repositorio" autocomplete="off" required>
-        <div class="campo-hint">Tem de ser um repositório público com um <span class="destaque">Dockerfile</span> na raiz.</div>
-      </div>
-
-      <div class="campo">
-        <label for="campoSubdominio">Subdomínio</label>
-        <input type="text" id="campoSubdominio" placeholder="bot-para-dar" autocomplete="off" required>
-        <div class="campo-hint" id="dominioPreview">ficará em <span class="destaque">—.mare.app</span></div>
-      </div>
-
-      <div class="modal-acoes">
-        <button type="button" class="btn-cancelar" id="btnCancelarModal">Cancelar</button>
-        <button type="submit" class="btn-criar" id="btnCriar">
-          <span class="spinner"></span>
-          <span class="texto-normal">Criar e implantar</span>
-        </button>
-      </div>
-    </form>
-  </div>
+<div id="player">
+<button onclick="voltar()">⬅ Voltar</button>
+<iframe id="iframePlayer" allowfullscreen></iframe>
 </div>
 
 <script>
-  const API_PROJETOS = null;
+const API_KEY="251ab326b041f1ccd4bfa4c407cd2940";
+const IMG="https://image.tmdb.org/t/p/w500";
+let filmeBanner = null;
 
-  let projetos = [
-    { nome:'bot-para-dar', dominio:'botparadar.mare.app', estado:'online', tempo:'último deploy há 4 min', memoria:'256 MB · 0.3 vCPU' },
-    { nome:'painel-mozchat', dominio:'painel.mare.app', estado:'building', tempo:'a construir agora…', memoria:'— MB · —' },
-    { nome:'bot-top-revenda', dominio:'toprevenda.mare.app', estado:'offline', tempo:'parado há 2 dias', memoria:'0 MB · 0 vCPU' },
-  ];
+async function carregar(tipo){
+const res=await fetch(`https://api.themoviedb.org/3/movie/${tipo}?api_key=${API_KEY}&language=pt-BR`);
+const data=await res.json();
+mostrarLinha(data.results, tipo);
 
-  const listaEl = document.getElementById('listaProjetos');
+if(tipo==='popular' && data.results[0]){
+filmeBanner = data.results[0];
+document.getElementById('banner').style.backgroundImage=`linear-gradient(to right, rgba(11,11,11,0.8) 0%, transparent 60%), url(${IMG}${filmeBanner.backdrop_path})`;
+document.getElementById('bannerTitulo').innerText=filmeBanner.title;
+document.getElementById('bannerDesc').innerText=filmeBanner.overview.substring(0,150)+"...";
+}
+}
 
-  function renderizarProjetos(){
-    if(projetos.length === 0){
-      listaEl.innerHTML = '<div class="vazio">Ainda não tens projetos. Toca em "+ Novo projeto" para começar.</div>';
-      return;
-    }
-    listaEl.innerHTML = projetos.map(p => `
-      <div class="projeto">
-        <div class="projeto-info">
-          <span class="status-dot ${p.estado}"></span>
-          <div>
-            <div class="projeto-nome">${p.nome}</div>
-            <div class="projeto-dominio">${p.dominio}</div>
-          </div>
-        </div>
-        <div class="projeto-meta">
-          <div class="tempo">${p.tempo}</div>
-          <div>${p.memoria}</div>
-        </div>
-      </div>
-    `).join('');
-  }
+function mostrarLinha(filmes, id){
+let html="";
+filmes.forEach(f=>{
+if(!f.poster_path)return;
+html+=`<div class="card" onclick="assistir(${f.id})"><img src="${IMG}${f.poster_path}"></div>`
+});
+document.getElementById('lista'+id.charAt(0).toUpperCase()+id.slice(1)).innerHTML=html;
+}
 
-  renderizarProjetos();
+function assistir(id){
+document.getElementById('player').style.display="flex";
+document.getElementById('iframePlayer').src=`https://vidsrc.xyz/embed/movie/${id}`;
+document.body.style.overflow="hidden";
+}
 
-  const overlay = document.getElementById('overlayModal');
-  const form = document.getElementById('formNovoProjeto');
-  const erroBox = document.getElementById('modalErro');
-  const btnCriar = document.getElementById('btnCriar');
+function assistirBanner(){
+if(filmeBanner) assistir(filmeBanner.id)
+}
 
-  function abrirModal(){
-    overlay.classList.add('aberto');
-    erroBox.classList.remove('mostrar');
-    form.reset();
-    document.getElementById('dominioPreview').innerHTML = 'ficará em <span class="destaque">—.mare.app</span>';
-  }
-  function fecharModal(){ overlay.classList.remove('aberto'); }
+function voltar(){
+document.getElementById('player').style.display="none";
+document.getElementById('iframePlayer').src="";
+document.body.style.overflow="auto";
+}
 
-  document.getElementById('btnAbrirModal').addEventListener('click', abrirModal);
-  document.getElementById('btnFecharModal').addEventListener('click', fecharModal);
-  document.getElementById('btnCancelarModal').addEventListener('click', fecharModal);
-  overlay.addEventListener('click', (e) => { if(e.target === overlay) fecharModal(); });
-
-  const campoRepo = document.getElementById('campoRepo');
-  const campoSubdominio = document.getElementById('campoSubdominio');
-  const dominioPreview = document.getElementById('dominioPreview');
-
-  function slugify(texto){
-    return texto.toLowerCase().trim()
-      .replace(/[^a-z0-9-]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-  }
-
-  campoRepo.addEventListener('input', () => {
-    const partes = campoRepo.value.trim().replace(/\/$/, '').split('/');
-    const nomeRepo = partes[partes.length - 1];
-    if(nomeRepo && !campoSubdominio.dataset.editadoManualmente){
-      campoSubdominio.value = slugify(nomeRepo);
-      atualizarPreviewDominio();
-    }
-    if(nomeRepo && !document.getElementById('campoNome').dataset.editadoManualmente){
-      document.getElementById('campoNome').value = nomeRepo;
-    }
-  });
-  campoSubdominio.addEventListener('input', () => {
-    campoSubdominio.dataset.editadoManualmente = 'true';
-    atualizarPreviewDominio();
-  });
-  document.getElementById('campoNome').addEventListener('input', function(){
-    this.dataset.editadoManualmente = 'true';
-  });
-
-  function atualizarPreviewDominio(){
-    const valor = slugify(campoSubdominio.value) || '—';
-    dominioPreview.innerHTML = `ficará em <span class="destaque">${valor}.mare.app</span>`;
-  }
-
-  function validarUrlGithub(url){
-    return /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/?$/.test(url.trim());
-  }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    erroBox.classList.remove('mostrar');
-
-    const nome = document.getElementById('campoNome').value.trim();
-    const repoUrl = campoRepo.value.trim();
-    const subdominio = slugify(campoSubdominio.value);
-
-    if(!validarUrlGithub(repoUrl)){
-      erroBox.textContent = 'Cola um link válido do GitHub, ex: https://github.com/utilizador/repositorio';
-      erroBox.classList.add('mostrar');
-      return;
-    }
-    if(!subdominio){
-      erroBox.textContent = 'Escolhe um subdomínio válido.';
-      erroBox.classList.add('mostrar');
-      return;
-    }
-    if(projetos.some(p => p.dominio === subdominio + '.mare.app')){
-      erroBox.textContent = 'Já existe um projeto com esse subdomínio.';
-      erroBox.classList.add('mostrar');
-      return;
-    }
-
-    btnCriar.classList.add('a-criar');
-    btnCriar.disabled = true;
-
-    try{
-      if(API_PROJETOS){
-        const res = await fetch(API_PROJETOS, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, repoUrl, subdominio })
-        });
-        if(!res.ok) throw new Error('Falha ao contactar o servidor de deploy');
-      } else {
-        await new Promise(r => setTimeout(r, 1400));
-      }
-
-      projetos.push({
-        nome,
-        dominio: subdominio + '.mare.app',
-        estado: 'building',
-        tempo: 'a construir agora…',
-        memoria: '— MB · —'
-      });
-      renderizarProjetos();
-      fecharModal();
-
-      if(!API_PROJETOS){
-        setTimeout(() => {
-          const p = projetos.find(p => p.nome === nome);
-          if(p){ p.estado = 'online'; p.tempo = 'último deploy agora mesmo'; p.memoria = '64 MB · 0.1 vCPU'; }
-          renderizarProjetos();
-        }, 3500);
-      }
-    } catch(err){
-      erroBox.textContent = 'Não foi possível criar o projeto. ' + err.message;
-      erroBox.classList.add('mostrar');
-    } finally {
-      btnCriar.classList.remove('a-criar');
-      btnCriar.disabled = false;
-    }
-  });
+// Carregar ao iniciar
+carregar('popular');
+carregar('top_rated');
 </script>
-
 </body>
 </html>
