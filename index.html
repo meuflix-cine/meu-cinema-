@@ -11,16 +11,14 @@ header{position:fixed;top:0;width:100%;padding:12px 4%;background:#000;display:f
 header h1{color:#E50914;font-size:18px;min-width:90px}
 .search-box{flex:1}
 .search-box input{width:100%;padding:8px;background:#222;border:1px solid #333;border-radius:4px;color:#fff;outline:none}
-.search-box input::placeholder{color:#888}
-nav button{background:none;border:none;color:#fff;font-size:13px;cursor:pointer}
 .row{padding:15px 4%;margin-top:55px}
 .row h3{margin-bottom:8px;font-size:16px}
 .lista-row{display:flex;gap:6px;overflow-x:auto}
 .lista-row::-webkit-scrollbar{display:none}
-.card{min-width:110px;cursor:pointer}
+.card{min-width:100px;cursor:pointer}
 .card img{width:100%;border-radius:3px}
 #player{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:200;display:none;flex-direction:column}
-#player button{margin:10px;background:#E50914;color:#fff;border:none;padding:10px 15px;width:100px;font-weight:bold;border-radius:4px}
+#player button{margin:10px;background:#E50914;color:#fff;border:none;padding:10px 15px;width:120px;font-weight:bold;border-radius:4px;z-index:201}
 #player iframe{flex:1;border:none}
 </style>
 </head>
@@ -30,12 +28,10 @@ nav button{background:none;border:none;color:#fff;font-size:13px;cursor:pointer}
 <div class="search-box">
 <input type="text" id="busca" placeholder="Pesquisar filme..." onkeyup="pesquisar(event)">
 </div>
-<nav><button onclick="carregar('popular')">Início</button></nav>
 </header>
 
 <div id="conteudo">
 <div class="row"><h3>Em Alta</h3><div class="lista-row" id="listaPopular"></div></div>
-<div class="row"><h3>Top Avaliados</h3><div class="lista-row" id="listaTop_rated"></div></div>
 </div>
 
 <div id="resultadoBusca" style="display:none" class="row">
@@ -43,17 +39,20 @@ nav button{background:none;border:none;color:#fff;font-size:13px;cursor:pointer}
 <div class="lista-row" id="listaResultado"></div>
 </div>
 
-<div id="player"><button onclick="voltar()">⬅ Voltar</button><iframe id="iframePlayer" allowfullscreen loading="lazy"></iframe></div>
+<div id="player">
+<button onclick="voltar()">⬅ Voltar</button>
+<iframe id="iframePlayer" sandbox="allow-scripts allow-same-origin allow-presentation" allowfullscreen></iframe>
+</div>
 
 <script>
 const API_KEY="251ab326b041f1ccd4bfa4c407cd2940";
-const IMG="https://image.tmdb.org/t/p/w200";
+const IMG="https://image.tmdb.org/t/p/w154";
 let timeoutBusca;
 
 async function carregar(tipo){
 const res=await fetch(`https://api.themoviedb.org/3/movie/${tipo}?api_key=${API_KEY}&language=pt-BR&page=1`);
 const data=await res.json();
-mostrarLinha(data.results.slice(0,15), 'lista'+tipo.charAt(0).toUpperCase()+tipo.slice(1));
+mostrarLinha(data.results.slice(0,15), 'listaPopular');
 }
 
 function mostrarLinha(filmes, id){
@@ -84,7 +83,8 @@ mostrarLinha(data.results.slice(0,20), 'listaResultado');
 
 function assistir(id){
 document.getElementById('player').style.display="flex";
-document.getElementById('iframePlayer').src=`https://vidapi.xyz/embed/movie/${id}/pt`;
+/* PLAYER SUPERVID.SU - é o mais limpo e não abre pop-up */
+document.getElementById('iframePlayer').src=`https://supervid.su/embed/movie/${id}`;
 document.body.style.overflow="hidden";
 }
 
@@ -95,7 +95,6 @@ document.body.style.overflow="auto";
 }
 
 carregar('popular');
-carregar('top_rated');
 </script>
 </body>
 </html>
