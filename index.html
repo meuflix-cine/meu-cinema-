@@ -29,21 +29,8 @@ nav button:hover{opacity:1}
 </style>
 </head>
 <body>
-<header>
-<h1>CINE LIVRE</h1>
-<nav>
-<button onclick="carregar('popular')">Início</button>
-<button onclick="carregar('top_rated')">Top 10</button>
-<button onclick="carregar('upcoming')">Lançamentos</button>
-</nav>
-</header>
-<div class="banner" id="banner">
-<div class="banner-info">
-<h2 id="bannerTitulo">CINE LIVRE</h2>
-<p id="bannerDesc">Busque milhares de filmes e assista online</p>
-<button class="btn-play" onclick="assistirBanner()">▶ Assistir</button>
-</div>
-</div>
+<header><h1>CINE LIVRE</h1><nav><button onclick="carregar('popular')">Início</button><button onclick="carregar('top_rated')">Top 10</button><button onclick="carregar('upcoming')">Lançamentos</button></nav></header>
+<div class="banner" id="banner"><div class="banner-info"><h2 id="bannerTitulo">CINE LIVRE</h2><p id="bannerDesc">Busque milhares de filmes e assista online</p><button class="btn-play" onclick="assistirBanner()">▶ Assistir</button></div></div>
 <div class="row"><h3>Em Alta</h3><div class="lista-row" id="listaPopular"></div></div>
 <div class="row"><h3>Top Avaliados</h3><div class="lista-row" id="listaTop_rated"></div></div>
 <div id="player"><button onclick="voltar()">⬅ Voltar</button><iframe id="iframePlayer" allowfullscreen></iframe></div>
@@ -71,7 +58,7 @@ document.getElementById('lista'+id.charAt(0).toUpperCase()+id.slice(1)).innerHTM
 }
 function assistir(id){
 document.getElementById('player').style.display="flex";
-document.getElementById('iframePlayer').src=`https://superembed.stream/embed/movie/${id}?lang=pt`;
+document.getElementById('iframePlayer').src=`https://vidapi.xyz/embed/movie/${id}/pt`;
 document.body.style.overflow="hidden";
 }
 function assistirBanner(){if(filmeBanner) assistir(filmeBanner.id)}
