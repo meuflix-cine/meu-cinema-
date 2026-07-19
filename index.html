@@ -6,79 +6,96 @@
   <title>CINE LIVRE</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:#0B0B0B; color:#fff; font-family:Arial, sans-serif; }
-    header { position:fixed; top:0; width:100%; padding:15px 5%; background:#000; display:flex; align-items:center; gap:15px; z-index:100; }
-    header h1 { color:#E50914; font-size:24px; }
-    .row { padding:20px 5%; margin-top:70px; }
-    .row h3 { margin-bottom:12px; font-size:20px; }
-    .lista { display:flex; gap:10px; overflow-x:auto; padding-bottom:15px; }
-    .card { min-width:130px; cursor:pointer; }
-    .card img { width:100%; border-radius:8px; }
-    .card p { text-align:center; margin-top:5px; font-size:14px; }
-    #player { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; display:none; flex-direction:column; z-index:1000; }
-    #player button { margin:10px; padding:12px 25px; background:#E50914; color:white; border:none; border-radius:6px; font-size:16px; }
-    iframe { flex:1; border:none; }
+    body { background:#141414; color:#fff; font-family:Arial, sans-serif; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:15px 40px; background:#000; position:fixed; width:100%; z-index:100; }
+    .logo { color:#e50914; font-size:28px; font-weight:bold; }
+    #busca { padding:10px; width:250px; background:#333; border:none; border-radius:6px; color:#fff; }
+
+    .banner { height:90vh; background-size:cover; background-position:center; display:flex; align-items:flex-end; padding:0 50px 80px; }
+    .banner-info h1 { font-size:50px; margin-bottom:10px; }
+    .banner-info p { max-width:500px; font-size:18px; }
+
+    .categoria { padding:30px 40px; margin-top:50px; }
+    .categoria h2 { margin-bottom:15px; font-size:24px; }
+    .lista-filmes { display:flex; gap:12px; overflow-x:auto; padding-bottom:20px; }
+    .card-filme { min-width:180px; cursor:pointer; transition:0.3s; }
+    .card-filme:hover { transform:scale(1.08); }
+    .card-filme img { width:100%; border-radius:8px; }
+    .card-filme p { text-align:center; margin-top:8px; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>CINE LIVRE</h1>
+    <div class="logo">CINE LIVRE</div>
+    <input type="text" id="busca" placeholder="🔎 Buscar filme ou série...">
   </header>
 
-  <div class="row">
-    <h3>🔥 Em Alta</h3>
-    <div class="lista" id="emAlta"></div>
-  </div>
+  <section class="banner" id="banner">
+    <div class="banner-info" id="banner-info"></div>
+  </section>
 
-  <div id="player">
-    <button onclick="voltar()">⬅ Voltar</button>
-    <iframe id="iframePlayer" allowfullscreen></iframe>
-  </div>
+  <main>
+    <section class="categoria">
+      <h2>Lançamentos</h2>
+      <div class="lista-filmes" id="lancamentos"></div>
+    </section>
+
+    <section class="categoria">
+      <h2>Populares</h2>
+      <div class="lista-filmes" id="populares"></div>
+    </section>
+
+    <section class="categoria">
+      <h2>Mais Votados</h2>
+      <div class="lista-filmes" id="top"></div>
+    </section>
+  </main>
 
   <script>
     const API_KEY = "251ab326b041f1ccd4bfa4c407cd2940";
-    const IMG = "https://image.tmdb.org/t/p/w200";
+    const BASE_URL = "https://api.themoviedb.org/3";
+    const IMG_URL = "https://image.tmdb.org/t/p/w500";
 
-    async function carregar() {
-      const url = `https://api.themoviedb.org/3/trending/all/week?api_key=${API_KEY}&language=pt-BR`;
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        const container = document.getElementById('emAlta');
-        container.innerHTML = '';
-
-        data.results.forEach(item => {
-          const title = item.title || item.name || "Sem título";
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <img src="\( {IMG} \){item.poster_path}" onclick="assistir(\( {item.id}, ' \){item.media_type}')">
-            <p>${title}</p>
-          `;
-          container.appendChild(card);
-        });
-      } catch(e) {
-        console.error(e);
-        document.getElementById('emAlta').innerHTML = "<p>Erro ao carregar filmes</p>";
-      }
+    async function pegarFilmes(url) {
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.results;
     }
 
-    function assistir(id, tipo) {
-      document.getElementById('player').style.display = 'flex';
-      const link = tipo === 'tv' 
-        ? `https://www.2embed.to/embed/tmdb/tv?id=${id}` 
-        : `https://www.2embed.to/embed/tmdb/movie?id=${id}`;
-      document.getElementById('iframePlayer').src = link;
+    async function carregarBanner() {
+      const filmes = await pegarFilmes(`\( {BASE_URL}/movie/popular?api_key= \){API_KEY}&language=pt-BR`);
+      const filme = filmes[0];
+      document.getElementById('banner').style.backgroundImage = `url(\( {IMG_URL} \){filme.backdrop_path})`;
+      document.getElementById('banner-info').innerHTML = `
+        <h1>${filme.title}</h1>
+        <p>${filme.overview.substring(0, 180)}...</p>
+      `;
     }
 
-    function voltar() {
-      document.getElementById('player').style.display = 'none';
-      document.getElementById('iframePlayer').src = '';
+    function mostrarFilmes(filmes, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = filmes.map(f => `
+        <div class="card-filme">
+          <img src="\( {IMG_URL} \){f.poster_path}" alt="${f.title}">
+          <p>${f.title}</p>
+        </div>
+      `).join('');
+    }
+
+    async function carregarTudo() {
+      const lanc = await pegarFilmes(`\( {BASE_URL}/movie/now_playing?api_key= \){API_KEY}&language=pt-BR`);
+      const pop = await pegarFilmes(`\( {BASE_URL}/movie/popular?api_key= \){API_KEY}&language=pt-BR`);
+      const top = await pegarFilmes(`\( {BASE_URL}/movie/top_rated?api_key= \){API_KEY}&language=pt-BR`);
+
+      mostrarFilmes(lanc, 'lancamentos');
+      mostrarFilmes(pop, 'populares');
+      mostrarFilmes(top, 'top');
     }
 
     // Iniciar
-    carregar();
+    carregarBanner();
+    carregarTudo();
   </script>
 </body>
 </html>
