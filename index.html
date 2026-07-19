@@ -8,29 +8,29 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { background:#141414; color:#fff; font-family:Arial, sans-serif; }
     header { display:flex; justify-content:space-between; align-items:center; padding:15px 40px; background:#000; position:fixed; width:100%; z-index:100; }
-   .logo { color:#e50914; font-size:28px; font-weight:bold; }
+.logo { color:#e50914; font-size:28px; font-weight:bold; }
     #busca { padding:10px; width:250px; background:#333; border:none; border-radius:6px; color:#fff; outline:none; }
-   .banner { height:90vh; background-size:cover; background-position:center; display:flex; align-items:flex-end; padding:0 50px 80px; }
-   .banner-info h1 { font-size:50px; margin-bottom:10px; text-shadow:2px 2px 4px #000; }
-   .banner-info p { max-width:500px; font-size:18px; text-shadow:1px 1px 2px #000; }
-   .categoria { padding:30px 40px; margin-top:50px; }
-   .categoria h2 { margin-bottom:15px; font-size:24px; }
-   .lista-filmes { display:flex; gap:12px; overflow-x:auto; padding-bottom:20px; }
-   .lista-filmes::-webkit-scrollbar { height:8px; }
-   .lista-filmes::-webkit-scrollbar-thumb { background:#e50914; border-radius:4px; }
-   .card-filme { min-width:180px; cursor:pointer; transition:0.3s; }
-   .card-filme:hover { transform:scale(1.08); }
-   .card-filme img { width:100%; border-radius:8px; }
-   .card-filme p { text-align:center; margin-top:8px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-   .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; overflow-y:auto; }
-   .modal-conteudo { max-width:900px; margin:50px auto; background:#181818; border-radius:10px; padding:20px; }
-   .modal-fechar { float:right; font-size:30px; cursor:pointer; color:#fff; }
-   .modal-info { display:flex; gap:20px; margin-top:20px; flex-wrap:wrap; }
-   .modal-info img { width:300px; border-radius:10px; }
-   .modal-texto h1 { font-size:32px; margin-bottom:10px; }
-   .modal-texto p { line-height:1.6; color:#ccc; }
-   .btn-assistir { background:#e50914; color:#fff; padding:12px 25px; border:none; border-radius:6px; font-size:18px; cursor:pointer; margin-top:15px; }
-   .btn-assistir:hover { background:#f6121d; }
+.banner { height:90vh; background-size:cover; background-position:center; display:flex; align-items:flex-end; padding:0 50px 80px; }
+.banner-info h1 { font-size:50px; margin-bottom:10px; text-shadow:2px 2px 4px #000; }
+.banner-info p { max-width:500px; font-size:18px; text-shadow:1px 1px 2px #000; }
+.categoria { padding:30px 40px; margin-top:50px; }
+.categoria h2 { margin-bottom:15px; font-size:24px; }
+.lista-filmes { display:flex; gap:12px; overflow-x:auto; padding-bottom:20px; }
+.lista-filmes::-webkit-scrollbar { height:8px; }
+.lista-filmes::-webkit-scrollbar-thumb { background:#e50914; border-radius:4px; }
+.card-filme { min-width:180px; cursor:pointer; transition:0.3s; }
+.card-filme:hover { transform:scale(1.08); }
+.card-filme img { width:100%; border-radius:8px; }
+.card-filme p { text-align:center; margin-top:8px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; overflow-y:auto; }
+.modal-conteudo { max-width:900px; margin:50px auto; background:#181818; border-radius:10px; padding:20px; }
+.modal-fechar { float:right; font-size:30px; cursor:pointer; color:#fff; }
+.modal-info { display:flex; gap:20px; margin-top:20px; flex-wrap:wrap; }
+.modal-info img { width:300px; border-radius:10px; }
+.modal-texto h1 { font-size:32px; margin-bottom:10px; }
+.modal-texto p { line-height:1.6; color:#ccc; }
+.btn-assistir { background:#e50914; color:#fff; padding:12px 25px; border:none; border-radius:6px; font-size:18px; cursor:pointer; margin-top:15px; }
+.btn-assistir:hover { background:#f6121d; }
   </style>
 </head>
 <body>
@@ -81,9 +81,14 @@
     }
 
     async function abrirModal(id) {
-      const res = await fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=pt-BR`);
+      const res = await fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=pt-BR&append_to_response=videos`);
       const filme = await res.json();
-      document.getElementById('modal-info').innerHTML = `<img src="${IMG_URL}${filme.poster_path}"><div class="modal-texto"><h1>${filme.title}</h1><p><b>Avaliação:</b> ${filme.vote_average} ⭐</p><p><b>Data:</b> ${filme.release_date}</p><p>${filme.overview}</p><button class="btn-assistir" onclick="alert('Coloca o link do filme aqui')">▶ Assistir Agora</button></div>`;
+
+      // Pega o trailer do YouTube
+      const trailer = filme.videos.results.find(v => v.type === "Trailer" && v.site === "YouTube");
+      const linkTrailer = trailer? `https://www.youtube.com/watch?v=${trailer.key}` : "#";
+
+      document.getElementById('modal-info').innerHTML = `<img src="${IMG_URL}${filme.poster_path}"><div class="modal-texto"><h1>${filme.title}</h1><p><b>Avaliação:</b> ${filme.vote_average} ⭐</p><p><b>Data:</b> ${filme.release_date}</p><p>${filme.overview}</p><button class="btn-assistir" onclick="window.open('${linkTrailer}', '_blank')">▶ Ver Trailer</button></div>`;
       document.getElementById('modal').style.display = 'block';
     }
     function fecharModal() { document.getElementById('modal').style.display = 'none'; }
