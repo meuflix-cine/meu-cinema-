@@ -1,140 +1,144 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CINE LIVRE</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{background:#141414;color:#fff;font-family:'Helvetica Neue',Arial,sans-serif}
-    header{display:flex;justify-content:space-between;align-items:center;padding:15px 40px;background:#000;position:fixed;width:100%;z-index:100}
-  .logo{color:#e50914;font-size:28px;font-weight:bold;letter-spacing:1px}
-    #busca{padding:10px;width:250px;background:#333;border:none;border-radius:6px;color:#fff;outline:none}
-  .banner{height:90vh;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:0 50px 80px}
-  .banner-info h1{font-size:50px;margin-bottom:10px;text-shadow:2px 2px 4px #000}
-  .banner-info p{max-width:500px;font-size:18px;text-shadow:1px 1px 2px #000}
-  .categoria{padding:30px 40px;margin-top:50px}
-  .categoria h2{margin-bottom:15px;font-size:24px}
-  .lista-filmes{display:flex;gap:12px;overflow-x:auto;padding-bottom:20px}
-  .lista-filmes::-webkit-scrollbar{height:8px}
-  .lista-filmes::-webkit-scrollbar-thumb{background:#e50914;border-radius:4px}
-  .card-filme{min-width:180px;cursor:pointer;transition:0.3s}
-  .card-filme:hover{transform:scale(1.08)}
-  .card-filme img{width:100%;border-radius:8px}
-  .card-filme p{text-align:center;margin-top:8px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:200;overflow-y:auto}
-  .modal-conteudo{max-width:1000px;margin:30px auto;background:#181818;border-radius:10px;padding:20px}
-  .modal-fechar{float:right;font-size:35px;cursor:pointer;color:#fff}
-  .modal-info h1{font-size:32px;margin:10px 0}
-  .modal-info p{line-height:1.6;color:#ccc;margin:5px 0}
-  .btn{background:#e50914;color:#fff;padding:12px 25px;border:none;border-radius:6px;font-size:18px;cursor:pointer;margin:15px 10px 0 0;font-weight:bold}
-  .btn:hover{background:#f6121d}
-  .btn2{background:#333}
-  .btn2:hover{background:#444}
-  .player-container{margin-top:20px;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
-  .player-container iframe{width:100%;height:100%;border:none}
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEU CINEMA</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#141414;color:#fff;font-family:Arial}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:#000;position:sticky;top:0;z-index:50}
+.logo{color:#e50914;font-size:28px;font-weight:bold}
+#busca{padding:10px;width:250px;background:#333;border:none;border-radius:6px;color:#fff}
+.menu{display:flex;gap:15px;padding:15px 30px;background:#181818}
+.menu button{background:#333;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:bold}
+.menu button.ativo{background:#e50914}
+.container{padding:30px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px}
+.card{background:#222;border-radius:8px;overflow:hidden;cursor:pointer;transition:0.3s}
+.card:hover{transform:scale(1.05)}
+.card img{width:100%;height:270px;object-fit:cover}
+.card h3{padding:10px;font-size:14px;text-align:center}
+.player{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:none;z-index:999}
+.player iframe{width:100%;height:100%;border:none}
+.fechar{position:absolute;top:15px;right:30px;font-size:40px;color:#fff;cursor:pointer;z-index:1000}
+.selecao-ep{padding:20px;background:#181818}
+.selecao-ep select{padding:8px;margin:5px;background:#333;color:#fff;border:none;border-radius:5px}
+.lista-eps{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.btn-ep{padding:8px 15px;background:#e50914;border:none;color:#fff;border-radius:5px;cursor:pointer}
+.voltar{padding:10px 20px;background:#555;border:none;color:#fff;border-radius:6px;margin:20px;cursor:pointer}
+</style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">CINE LIVRE</div>
-    <input type="text" id="busca" placeholder="🔎 Buscar filme ou série...">
-  </header>
+<header>
+  <div class="logo">MEU CINEMA</div>
+  <input type="text" id="busca" placeholder="🔎 Buscar filme, série ou anime...">
+</header>
 
-  <section class="banner" id="banner">
-    <div class="banner-info" id="banner-info"></div>
-  </section>
+<div class="menu">
+  <button class="ativo" onclick="mostrarAba('filmes', this)">Filmes</button>
+  <button onclick="mostrarAba('series', this)">Séries</button>
+  <button onclick="mostrarAba('animes', this)">Animes</button>
+</div>
 
-  <main>
-    <section class="categoria"><h2>Lançamentos</h2><div class="lista-filmes" id="lancamentos"></div></section>
-    <section class="categoria"><h2>Populares</h2><div class="lista-filmes" id="populares"></div></section>
-    <section class="categoria"><h2>Mais Votados</h2><div class="lista-filmes" id="top"></div></section>
-  </main>
+<div class="container" id="container"></div>
 
-  <div class="modal" id="modal">
-    <div class="modal-conteudo">
-      <span class="modal-fechar" onclick="fecharModal()">&times;</span>
-      <div id="modal-info"></div>
+<!-- PLAYER -->
+<div class="player" id="player">
+  <span class="fechar" onclick="fechar()">×</span>
+  <iframe id="iframe" allowfullscreen></iframe>
+</div>
+
+<script>
+const API_KEY="eb76a444cabe431c116819d926c";
+const BASE_URL="https://api.themoviedb.org/3";
+const IMG_URL="https://image.tmdb.org/t/p/w500";
+
+// AQUI TU COLA TEUS LINKS DO DRIVE
+const MEUS_LINKS = {
+  filmes: {
+    299536: "https://drive.google.com/file/d/1ABC123xyz/preview", // Vingadores
+  },
+  series: {
+    1399: { // Game of Thrones
+      1: { 1: "https://drive.google.com/file/d/2DEF456uvw/preview" }, // T1 E1
+    }
+  },
+  animes: {
+    1429: { // Attack on Titan
+      1: { 1: "https://drive.google.com/file/d/3GHI789rst/preview" }, // T1 E1
+    }
+  }
+}
+
+async function buscar(tipo, query="popular"){
+  let url;
+  if(query==="popular"){
+    if(tipo==="filmes") url = `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=pt-BR`;
+    if(tipo==="series") url = `${BASE_URL}/tv/popular?api_key=${API_KEY}&language=pt-BR`;
+    if(tipo==="animes") url = `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=pt-BR&with_genres=16`; // 16 = Animação
+  } else {
+    if(tipo==="filmes") url = `${BASE_URL}/search/movie?api_key=${API_KEY}&language=pt-BR&query=${query}`;
+    if(tipo==="series" || tipo==="animes") url = `${BASE_URL}/search/tv?api_key=${API_KEY}&language=pt-BR&query=${query}`;
+  }
+
+  const res = await fetch(url); const data = await res.json();
+  mostrar(data.results, tipo);
+}
+
+function mostrar(itens, tipo){
+  document.getElementById('container').innerHTML = itens.map(i=>`
+    <div class="card" onclick="abrir('${tipo}', ${i.id})">
+      <img src="${IMG_URL}${i.poster_path}">
+      <h3>${i.title || i.name}</h3>
     </div>
-  </div>
+  `).join('');
+}
 
-  <script>
-    const API_KEY = "251ab326b041f1ccd4bfa4c407cd2940";
-    const BASE_URL = "https://api.themoviedb.org/3";
-    const IMG_URL = "https://image.tmdb.org/t/p/w500";
+async function abrir(tipo, id){
+  if(tipo==="filmes"){
+    const link = MEUS_LINKS.filmes[id];
+    if(link) assistir(link);
+    else alert("Esse filme ainda não tem link no Drive. Adiciona em MEUS_LINKS");
+  }
+  if(tipo==="series" || tipo==="animes"){
+    const res = await fetch(`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=pt-BR`);
+    const serie = await res.json();
+    let html = `<button class="voltar" onclick="mostrarAba('${tipo}')">← Voltar</button>`;
+    html += `<h2 style="padding:0 20px">${serie.name}</h2><div class="selecao-ep">`;
+    html += `Temporada: <select id="temp" onchange="carregarEps(${id},'${tipo}')">`;
+    serie.seasons.forEach(s=> {if(s.season_number>0) html+=`<option value="${s.season_number}">T${s.season_number}</option>`});
+    html += `</select><div class="lista-eps" id="lista-eps"></div></div>`;
+    document.getElementById('container').innerHTML = html;
+    carregarEps(id, tipo);
+  }
+}
 
-    async function pegarFilmes(url){
-      const res = await fetch(url);
-      const data = await res.json();
-      return data.results;
-    }
+function carregarEps(idSerie, tipo){
+  const temp = document.getElementById('temp').value;
+  const eps = MEUS_LINKS[tipo][idSerie]?. || {};
+  document.getElementById('lista-eps').innerHTML = Object.keys(eps).map(e=>`
+    <button class="btn-ep" onclick="assistir('${eps[e]}')">Ep ${e}</button>
+  `).join('') || "Sem link pra essa temporada. Adiciona em MEUS_LINKS";
+}
 
-    async function carregarBanner(){
-      const filmes = await pegarFilmes(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=pt-BR`);
-      const filme = filmes[0];
-      document.getElementById('banner').style.backgroundImage = `url(${IMG_URL}${filme.backdrop_path})`;
-      document.getElementById('banner-info').innerHTML = `<h1>${filme.title}</h1><p>${filme.overview.substring(0,180)}...</p><button class="btn" onclick="abrirModal(${filme.id})">▶ Ver Detalhes</button>`;
-    }
+function assistir(link){
+  document.getElementById('iframe').src = link;
+  document.getElementById('player').style.display = 'block';
+}
+function fechar(){
+  document.getElementById('iframe').src = '';
+  document.getElementById('player').style.display = 'none';
+}
+function mostrarAba(aba, btn){
+  if(btn) document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('ativo'));
+  if(btn) btn.classList.add('ativo');
+  buscar(aba);
+}
 
-    function mostrarFilmes(filmes, containerId){
-      const container = document.getElementById(containerId);
-      container.innerHTML = filmes.map(f => `<div class="card-filme" onclick="abrirModal(${f.id})"><img src="${IMG_URL}${f.poster_path}"><p>${f.title}</p></div>`).join('');
-    }
-
-    async function abrirModal(id){
-      const res = await fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=pt-BR&append_to_response=videos`);
-      const filme = await res.json();
-      const trailer = filme.videos.results.find(v => v.type === "Trailer" && v.site === "YouTube");
-      const linkTrailer = trailer? `https://www.youtube.com/embed/${trailer.key}` : "";
-
-      // VIDEO DE TESTE JÁ FUNCIONANDO
-      const linkFilme = "https://www.youtube.com/embed/dQw4w9WgXcQ";
-
-      document.getElementById('modal-info').innerHTML = `
-        <h1>${filme.title}</h1>
-        <p><b>Avaliação:</b> ${filme.vote_average} ⭐ | <b>Data:</b> ${filme.release_date}</p>
-        <p>${filme.overview}</p>
-        <button class="btn" onclick="reproduzirFilme('${linkFilme}')">▶ Assistir Agora</button>
-        <button class="btn btn2" onclick="reproduzirTrailer('${linkTrailer}')">▶ Ver Trailer</button>
-        <div class="player-container" id="player"></div>
-      `;
-      document.getElementById('modal').style.display = 'block';
-    }
-
-    function reproduzirFilme(link){
-      document.getElementById('player').innerHTML = `<iframe src="${link}" allowfullscreen></iframe>`;
-    }
-
-    function reproduzirTrailer(link){
-      document.getElementById('player').innerHTML = `<iframe src="${link}" allowfullscreen></iframe>`;
-    }
-
-    function fecharModal(){
-      document.getElementById('modal').style.display = 'none';
-      document.getElementById('player').innerHTML = '';
-    }
-
-    async function carregarTudo(){
-      const lanc = await pegarFilmes(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=pt-BR`);
-      const pop = await pegarFilmes(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=pt-BR`);
-      const top = await pegarFilmes(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=pt-BR`);
-      mostrarFilmes(lanc, 'lancamentos');
-      mostrarFilmes(pop, 'populares');
-      mostrarFilmes(top, 'top');
-    }
-
-    document.getElementById('busca').addEventListener('input', async (e) => {
-      const termo = e.target.value;
-      if(termo.length > 2){
-        const resultados = await pegarFilmes(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${termo}&language=pt-BR`);
-        mostrarFilmes(resultados, 'populares');
-      }
-      if(termo.length == 0) carregarTudo();
-    });
-
-    carregarBanner();
-    carregarTudo();
-  </script>
+document.getElementById('busca').addEventListener('keyup', e=>{
+  if(e.key==='Enter') buscar('filmes', e.target.value)
+});
+buscar('filmes');
+</script>
 </body>
 </html>
