@@ -1,144 +1,282 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEU CINEMA</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vingadores: Ultimato - CineFlix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#141414;color:#fff;font-family:Arial}
-header{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:#000;position:sticky;top:0;z-index:50}
-.logo{color:#e50914;font-size:28px;font-weight:bold}
-#busca{padding:10px;width:250px;background:#333;border:none;border-radius:6px;color:#fff}
-.menu{display:flex;gap:15px;padding:15px 30px;background:#181818}
-.menu button{background:#333;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:bold}
-.menu button.ativo{background:#e50914}
-.container{padding:30px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px}
-.card{background:#222;border-radius:8px;overflow:hidden;cursor:pointer;transition:0.3s}
-.card:hover{transform:scale(1.05)}
-.card img{width:100%;height:270px;object-fit:cover}
-.card h3{padding:10px;font-size:14px;text-align:center}
-.player{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:none;z-index:999}
-.player iframe{width:100%;height:100%;border:none}
-.fechar{position:absolute;top:15px;right:30px;font-size:40px;color:#fff;cursor:pointer;z-index:1000}
-.selecao-ep{padding:20px;background:#181818}
-.selecao-ep select{padding:8px;margin:5px;background:#333;color:#fff;border:none;border-radius:5px}
-.lista-eps{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
-.btn-ep{padding:8px 15px;background:#e50914;border:none;color:#fff;border-radius:5px;cursor:pointer}
-.voltar{padding:10px 20px;background:#555;border:none;color:#fff;border-radius:6px;margin:20px;cursor:pointer}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        background: #141414;
+        color: #ffffff;
+        font-family: 'Roboto', Arial, sans-serif;
+        overflow-x: hidden;
+    }
+    
+    /* HEADER */
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 20px 4%;
+        background: linear-gradient(180deg, rgba(0,0,0,0.7) 10%, transparent);
+        z-index: 1000;
+        transition: background 0.3s;
+    }
+    
+    .navbar.scrolled {
+        background: #141414;
+    }
+    
+    .logo {
+        color: #E50914;
+        font-size: 2rem;
+        font-weight: 900;
+        text-decoration: none;
+    }
+    
+    /* BANNER PRINCIPAL */
+    .banner {
+        height: 80vh;
+        background: linear-gradient(to right, #141414 30%, transparent 70%), 
+                    linear-gradient(to top, #141414 10%, transparent 40%),
+                    url('https://image.tmdb.org/t/p/original/or06FN3Dka5tukK1e9sl16pB3iy.jpg') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        padding: 0 4%;
+        margin-top: 0;
+    }
+    
+    .banner-content {
+        max-width: 600px;
+        z-index: 2;
+    }
+    
+    .banner-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+    
+    .banner-info {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+        color: #46d369;
+        font-weight: 700;
+    }
+    
+    .banner-desc {
+        font-size: 1.2rem;
+        line-height: 1.5;
+        margin-bottom: 25px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+    
+    .banner-buttons {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+    
+    .btn-play {
+        background: #ffffff;
+        color: #000;
+    }
+    
+    .btn-play:hover {
+        background: #E50914;
+        color: #ffffff;
+    }
+    
+    .btn-info {
+        background: rgba(109, 109, 110, 0.7);
+        color: #ffffff;
+    }
+    
+    .btn-info:hover {
+        background: rgba(109, 109, 110, 0.4);
+    }
+    
+    /* PLAYER DE VÍDEO */
+    .video-player {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: #000;
+        z-index: 2000;
+    }
+    
+    .video-player iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    
+    .btn-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        padding: 10px 20px;
+        border-radius: 50%;
+        z-index: 2001;
+    }
+    
+    .btn-close:hover {
+        background: #E50914;
+    }
+    
+    /* SEÇÃO DETALHES */
+    .details {
+        padding: 40px 4%;
+        background: #141414;
+    }
+    
+    .details-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .details-main h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .details-main p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #d2d2d2;
+    }
+    
+    .details-side p {
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+    
+    .details-side span {
+        color: #777;
+    }
+    
+    /* RESPONSIVO */
+    @media (max-width: 768px) {
+        .banner-title { font-size: 2rem; }
+        .banner-desc { font-size: 1rem; }
+        .details-grid { grid-template-columns: 1fr; }
+        .btn { padding: 10px 20px; font-size: 1rem; }
+    }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">MEU CINEMA</div>
-  <input type="text" id="busca" placeholder="🔎 Buscar filme, série ou anime...">
-</header>
+<nav class="navbar" id="navbar">
+    <a href="index.html" class="logo">CINEFLIX</a>
+</nav>
 
-<div class="menu">
-  <button class="ativo" onclick="mostrarAba('filmes', this)">Filmes</button>
-  <button onclick="mostrarAba('series', this)">Séries</button>
-  <button onclick="mostrarAba('animes', this)">Animes</button>
-</div>
+<section class="banner">
+    <div class="banner-content">
+        <h1 class="banner-title">Vingadores: Ultimato</h1>
+        <div class="banner-info">
+            <span>2019</span>
+            <span>16+</span>
+            <span>3h 1min</span>
+            <span>Ação</span>
+        </div>
+        <p class="banner-desc">
+            Após os eventos devastadores de Vingadores: Guerra Infinita, o universo está em ruínas. 
+            Com a ajuda de aliados que restaram, os Vingadores se reúnem mais uma vez para desfazer 
+            as ações de Thanos e restaurar a ordem no universo.
+        </p>
+        <div class="banner-buttons">
+            <button class="btn btn-play" onclick="abrirVideo()">▶ ASSISTIR</button>
+            <button class="btn btn-info">ℹ MAIS INFORMAÇÕES</button>
+        </div>
+    </div>
+</section>
 
-<div class="container" id="container"></div>
+<section class="details">
+    <div class="details-grid">
+        <div class="details-main">
+            <h3>Sinopse</h3>
+            <p>
+                O destino do universo está em jogo e os Vingadores precisam se reunir para reverter 
+                os danos causados por Thanos. Esta batalha épica traz o clímax de 22 filmes do MCU 
+                em uma conclusão emocionante e satisfatória.
+            </p>
+        </div>
+        <div class="details-side">
+            <p><span>Elenco:</span> Robert Downey Jr., Chris Evans, Scarlett Johansson</p>
+            <p><span>Gêneros:</span> Ação, Aventura, Ficção Científica</p>
+            <p><span>Diretor:</span> Irmãos Russo</p>
+        </div>
+    </div>
+</section>
 
-<!-- PLAYER -->
-<div class="player" id="player">
-  <span class="fechar" onclick="fechar()">×</span>
-  <iframe id="iframe" allowfullscreen></iframe>
+<div class="video-player" id="videoPlayer">
+    <button class="btn-close" onclick="fecharVideo()">×</button>
+    <iframe src="https://drive.google.com/file/d/1GX87dScVKsS6A0Lm1qCnv73Exqu0WSrP/preview" allow="autoplay; fullscreen"></iframe>
 </div>
 
 <script>
-const API_KEY="eb76a444cabe431c116819d926c";
-const BASE_URL="https://api.themoviedb.org/3";
-const IMG_URL="https://image.tmdb.org/t/p/w500";
-
-// AQUI TU COLA TEUS LINKS DO DRIVE
-const MEUS_LINKS = {
-  filmes: {
-    299536: "https://drive.google.com/file/d/1ABC123xyz/preview", // Vingadores
-  },
-  series: {
-    1399: { // Game of Thrones
-      1: { 1: "https://drive.google.com/file/d/2DEF456uvw/preview" }, // T1 E1
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    
+    // Abrir e fechar vídeo
+    function abrirVideo() {
+        document.getElementById('videoPlayer').style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
-  },
-  animes: {
-    1429: { // Attack on Titan
-      1: { 1: "https://drive.google.com/file/d/3GHI789rst/preview" }, // T1 E1
+    
+    function fecharVideo() {
+        document.getElementById('videoPlayer').style.display = 'none';
+        document.body.style.overflow = 'auto';
     }
-  }
-}
-
-async function buscar(tipo, query="popular"){
-  let url;
-  if(query==="popular"){
-    if(tipo==="filmes") url = `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=pt-BR`;
-    if(tipo==="series") url = `${BASE_URL}/tv/popular?api_key=${API_KEY}&language=pt-BR`;
-    if(tipo==="animes") url = `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=pt-BR&with_genres=16`; // 16 = Animação
-  } else {
-    if(tipo==="filmes") url = `${BASE_URL}/search/movie?api_key=${API_KEY}&language=pt-BR&query=${query}`;
-    if(tipo==="series" || tipo==="animes") url = `${BASE_URL}/search/tv?api_key=${API_KEY}&language=pt-BR&query=${query}`;
-  }
-
-  const res = await fetch(url); const data = await res.json();
-  mostrar(data.results, tipo);
-}
-
-function mostrar(itens, tipo){
-  document.getElementById('container').innerHTML = itens.map(i=>`
-    <div class="card" onclick="abrir('${tipo}', ${i.id})">
-      <img src="${IMG_URL}${i.poster_path}">
-      <h3>${i.title || i.name}</h3>
-    </div>
-  `).join('');
-}
-
-async function abrir(tipo, id){
-  if(tipo==="filmes"){
-    const link = MEUS_LINKS.filmes[id];
-    if(link) assistir(link);
-    else alert("Esse filme ainda não tem link no Drive. Adiciona em MEUS_LINKS");
-  }
-  if(tipo==="series" || tipo==="animes"){
-    const res = await fetch(`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=pt-BR`);
-    const serie = await res.json();
-    let html = `<button class="voltar" onclick="mostrarAba('${tipo}')">← Voltar</button>`;
-    html += `<h2 style="padding:0 20px">${serie.name}</h2><div class="selecao-ep">`;
-    html += `Temporada: <select id="temp" onchange="carregarEps(${id},'${tipo}')">`;
-    serie.seasons.forEach(s=> {if(s.season_number>0) html+=`<option value="${s.season_number}">T${s.season_number}</option>`});
-    html += `</select><div class="lista-eps" id="lista-eps"></div></div>`;
-    document.getElementById('container').innerHTML = html;
-    carregarEps(id, tipo);
-  }
-}
-
-function carregarEps(idSerie, tipo){
-  const temp = document.getElementById('temp').value;
-  const eps = MEUS_LINKS[tipo][idSerie]?. || {};
-  document.getElementById('lista-eps').innerHTML = Object.keys(eps).map(e=>`
-    <button class="btn-ep" onclick="assistir('${eps[e]}')">Ep ${e}</button>
-  `).join('') || "Sem link pra essa temporada. Adiciona em MEUS_LINKS";
-}
-
-function assistir(link){
-  document.getElementById('iframe').src = link;
-  document.getElementById('player').style.display = 'block';
-}
-function fechar(){
-  document.getElementById('iframe').src = '';
-  document.getElementById('player').style.display = 'none';
-}
-function mostrarAba(aba, btn){
-  if(btn) document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('ativo'));
-  if(btn) btn.classList.add('ativo');
-  buscar(aba);
-}
-
-document.getElementById('busca').addEventListener('keyup', e=>{
-  if(e.key==='Enter') buscar('filmes', e.target.value)
-});
-buscar('filmes');
+    
+    // Fechar com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            fecharVideo();
+        }
+    });
 </script>
+
 </body>
 </html>
